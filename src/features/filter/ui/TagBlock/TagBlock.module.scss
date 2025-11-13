@@ -1,0 +1,76 @@
+@use "@shared/styles/_mixins.scss" as *;
+
+.block {
+  position: relative;
+  display: flex;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  align-items: center;
+  gap: var(--spacing-xs);
+  background: var(--color-bg-secondary);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-full);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+
+  &.active {
+    color: #fff;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 60%);
+    border-color: var(--color-primary);
+  }
+}
+
+.blockTags {
+  display: flex;
+  min-width: 0;
+  flex: 1 1 auto;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.pill {
+  padding: 2px 8px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: lowercase;
+  white-space: nowrap;
+  color: var(--color-tag-text);
+  background: var(--color-tag-bg);
+  border: 1px solid var(--color-tag-border);
+  border-radius: var(--radius-full);
+}
+
+.placeholder {
+  font-size: 0.7rem;
+  opacity: 50%;
+}
+
+.delete {
+  display: flex;
+  width: 20px;
+  height: 20px;
+  justify-content: center;
+  align-items: center;
+  color: currentColor;
+  background: transparent;
+  border-radius: var(--radius-full);
+  transition: background var(--transition-fast);
+
+  &:hover {
+    background: rgb(255 255 255 / 20%);
+  }
+}
+
+// Responsive
+@include down(sm) {
+  .pill {
+    padding: 2px 6px;
+    font-size: 0.65rem;
+  }
+
+  .delete {
+    width: 18px;
+    height: 18px;
+  }
+}

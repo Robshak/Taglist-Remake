@@ -1,0 +1,74 @@
+@use "@shared/styles/mixins" as *;
+
+.tagsLine {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+
+  /* без искусственного растягивания: если контента мало, кнопка будет сразу после тегов */
+}
+
+.scroll {
+  display: inline-flex;
+  overflow: hidden;
+  min-width: 0;
+  flex: 0 1 auto; /* контейнер занимает ширину контента, но может ужаться при переполнении */
+  gap: var(--spacing-xs);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  mask-image: linear-gradient(to right, black 80%, transparent);
+}
+
+.scrollCompact {
+  mask-image: none;
+}
+
+.tag {
+  padding: 2px 8px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+  color: var(--color-tag-text);
+  background-color: var(--color-tag-bg);
+  border: 1px solid var(--color-tag-border);
+  border-radius: var(--radius-full);
+  transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+
+  &:hover {
+    color: var(--color-tag-text-active);
+  }
+
+  &.active,
+  &.isEditing { /* potential future state classes */
+    color: var(--color-tag-text-active);
+    background-color: var(--color-tag-bg-active);
+    border-color: var(--color-tag-bg-active);
+  }
+}
+
+.edit {
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  margin-left: var(--spacing-xs); /* небольшой зазор прямо возле последнего тега */
+  flex: 0 0 auto;
+  justify-content: center;
+  align-items: center;
+  color: var(--color-text-secondary);
+  background: transparent;
+  border-radius: var(--radius-full);
+  transition: all var(--transition-fast);
+
+  &:hover {
+    color: var(--color-primary);
+    background: var(--color-bg);
+  }
+}
+
+@include down(md) {
+  .tag {
+    font-size: 0.65rem;
+  }
+}
+

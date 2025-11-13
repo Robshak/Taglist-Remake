@@ -1,0 +1,50 @@
+@use "@shared/styles/mixins" as *;
+
+.app {
+  display: flex;
+  overflow: hidden;
+  height: 100vh;
+  flex-direction: column;
+}
+
+.container {
+  display: grid;
+  overflow: hidden;
+  flex: 1;
+  grid-template-columns: 1fr 320px;
+
+  @include down(lg) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.main {
+  display: flex;
+  overflow: hidden;
+  flex-direction: column;
+}
+
+.search {
+  padding: var(--spacing-xl) var(--spacing-lg);
+  border-bottom: 1px solid var(--color-border);
+
+  @include down(md) {
+    padding: var(--spacing-lg) var(--spacing-md);
+  }
+}
+
+.content {
+  overflow-y: auto;
+  padding: var(--spacing-lg);
+  flex: 1;
+
+  @include down(md) {
+    padding: var(--spacing-md);
+  }
+}
+
+.sidebar {
+  @include down(lg) {
+    display: none;
+  }
+}

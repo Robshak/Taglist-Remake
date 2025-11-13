@@ -1,0 +1,154 @@
+@use "@shared/styles/_mixins.scss" as *;
+
+.tagFilter {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: .75rem;
+}
+
+.titleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: .75rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.toggle {
+  display: inline-flex;
+  padding: .4rem .6rem;
+  align-items: center;
+  gap: .5rem;
+  color: var(--color-text);
+  background: var(--color-bg-secondary);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--color-primary);
+    background: var(--color-bg);
+    border-color: var(--color-primary);
+  }
+
+  &.open {
+    color: var(--color-primary);
+    background: var(--color-bg);
+    border-color: var(--color-primary);
+  }
+}
+
+.actions {
+  display: flex;
+  gap: .5rem;
+}
+
+.saveBtn {
+  display: inline-flex;
+  padding: .5rem .9rem;
+  align-items: center;
+  gap: .4rem;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
+  border: none;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.manageTags {
+  display: inline-flex;
+  padding: .5rem .8rem;
+  align-items: center;
+  gap: .4rem;
+  color: var(--color-text);
+  background: var(--color-bg-secondary);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--color-primary);
+    background: var(--color-bg);
+    border-color: var(--color-primary);
+  }
+}
+
+.clearBtn {
+  display: inline-flex;
+  padding: .5rem .8rem;
+  align-items: center;
+  gap: .4rem;
+  color: var(--color-text);
+  background: var(--color-bg-secondary);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+
+  &:hover {
+    color: #ef4444;
+    background: var(--color-bg);
+    border-color: #ef4444;
+  }
+}
+
+// Responsive
+@include down(md) {
+  .header {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .title {
+    font-size: 1.25rem;
+  }
+
+  .actions {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: .4rem;
+  }
+
+  .saveBtn,
+  .manageTags,
+  .clearBtn,
+  .toggle {
+    padding: .4rem .6rem;
+  }
+}
+
+@include down(sm) {
+  .title {
+    font-size: 1.125rem;
+  }
+
+  .actions {
+    gap: .35rem;
+  }
+}
+

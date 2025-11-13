@@ -1,0 +1,316 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 4000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgb(0 0 0 / 50%);
+}
+
+.trackTagsManager {
+  display: flex;
+  width: min(720px, 96vw);
+  max-height: 86vh;
+  flex-direction: column;
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.header {
+  display: flex;
+  padding: 1rem 1rem 0.5rem;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.title {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.trackName {
+  margin-top: 0.15rem;
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+.close {
+  display: inline-flex;
+  width: 36px;
+  height: 36px;
+  justify-content: center;
+  align-items: center;
+  color: #ef4444;
+  background: transparent;
+  border: 2px solid rgb(239 68 68 / 45%);
+  border-radius: var(--radius-full);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+
+  &:hover {
+    color: #fff;
+    background: #ef4444;
+    border-color: #ef4444;
+  }
+}
+
+.content {
+  display: flex;
+  overflow: auto;
+  padding: 1rem;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.createBtn {
+  display: inline-flex;
+  padding: 0.4rem 0.7rem;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--color-text);
+  background: var(--color-bg-secondary);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+
+  &:not(.isOpen)::before {
+    display: inline-block;
+    font-weight: 700;
+    line-height: 1;
+    content: "+";
+  }
+
+  &:hover {
+    color: var(--color-primary);
+    background: var(--color-bg);
+    border-color: var(--color-primary);
+  }
+}
+
+.createForm {
+  padding: 0.75rem;
+  background: var(--color-bg-secondary);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.createFields {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  input {
+    padding: 0.5rem 0.7rem;
+    flex: 1;
+    color: var(--color-text);
+    background: var(--color-bg);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-md);
+
+    &:focus {
+      border-color: var(--color-primary);
+      outline: none;
+    }
+
+    &.hasError {
+      border-color: #ef4444;
+    }
+  }
+
+  button {
+    padding: 0.5rem 0.8rem;
+    color: #fff;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+  }
+}
+
+.error {
+  margin-top: 0.4rem;
+  font-size: 0.85rem;
+  color: #ef4444;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tag {
+  display: inline-flex;
+  padding: 0.25rem 0.6rem;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--color-text);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+
+  > span {
+    cursor: pointer;
+    user-select: none;
+  }
+
+  &Active {
+    color: #fff;
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+
+    > button:not(.editBtn, .deleteTag, .saveBtn, .cancelBtn) {
+      color: #ef4444;
+    }
+
+    > button:not(.editBtn, .deleteTag, .saveBtn, .cancelBtn) svg {
+      color: #ef4444;
+    }
+
+    > button:not(.editBtn, .deleteTag, .saveBtn, .cancelBtn):hover {
+      color: #fff;
+
+      background: #ef4444;
+    }
+
+    > button:not(.editBtn, .deleteTag, .saveBtn, .cancelBtn):hover svg {
+      color: #fff;
+    }
+  }
+
+  &Editing {
+    background: var(--color-bg);
+    border-style: dashed;
+  }
+
+  button {
+    display: inline-flex;
+    width: 22px;
+    height: 22px;
+    justify-content: center;
+    align-items: center;
+    color: currentColor;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-full);
+    outline: none;
+    transition:
+      background-color var(--transition-fast),
+      color var(--transition-fast),
+      border-color var(--transition-fast);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+.tagInput {
+  padding: 0.25rem 0.5rem;
+  color: var(--color-text);
+  background: var(--color-bg);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.tagInput:focus {
+  border-color: var(--color-primary);
+  outline: none;
+}
+
+.saveBtn {
+  color: #10b981;
+  background: transparent;
+  border: none !important;
+}
+
+.editBtn {
+  color: #3b82f6;
+  background: transparent;
+  border: none;
+}
+
+.deleteTag {
+  color: #ef4444;
+  background: transparent;
+  border: none;
+}
+
+.saveBtn,
+.editBtn,
+.deleteTag,
+.cancelBtn {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+}
+
+.saveBtn:hover {
+  color: #fff;
+  background: #10b981;
+}
+
+.editBtn:hover {
+  color: #fff;
+  background: #3b82f6;
+}
+
+.deleteTag:hover {
+  color: #fff;
+  background: #ef4444;
+}
+
+.cancelBtn {
+  color: #ef4444;
+  background: transparent;
+  border: none;
+}
+
+.cancelBtn:hover {
+  color: #fff;
+  background: #ef4444;
+}
+
+.tag .editBtn:not(:hover) {
+  color: #3b82f6;
+}
+
+.tag .deleteTag:not(:hover) {
+  color: #ef4444;
+}
+
+.tag .cancelBtn:not(:hover) {
+  color: #ef4444;
+}
+
+.tag .saveBtn:not(:hover) {
+  color: #10b981;
+}
+
+.empty {
+  display: inline-block;
+  padding: 0.5rem 0.75rem;
+  color: var(--color-text-secondary);
+  background: var(--color-bg-secondary);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+}
+

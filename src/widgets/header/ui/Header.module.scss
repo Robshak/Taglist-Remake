@@ -1,0 +1,115 @@
+@use "@shared/styles/mixins" as *;
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  padding: var(--spacing-md) 0;
+  background-color: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  backdrop-filter: blur(10px);
+}
+
+.container {
+  display: flex;
+
+  padding: 0 var(--spacing-lg);
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.actionBtn {
+  display: flex;
+  width: 48px;
+  height: 48px;
+  justify-content: center;
+  align-items: center;
+  color: var(--color-text);
+  background-color: var(--color-bg-secondary);
+  border-radius: var(--radius-full);
+  transition: all var(--transition-fast);
+
+  &:hover {
+    background-color: var(--color-border);
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.languageToggle {
+  width: auto;
+  min-width: 48px;
+  padding: 0 var(--spacing-md);
+  gap: var(--spacing-xs);
+}
+
+.langText {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.menu {
+  display: none;
+}
+
+.mobileOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  background: rgb(0 0 0 / 50%);
+  overscroll-behavior: contain;
+  touch-action: none;
+}
+
+.mobileSheet {
+  display: flex;
+  overflow: hidden;
+  width: 100%;
+  max-width: 500px;
+  height: 80vh;
+  flex-direction: column;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  box-shadow: var(--shadow-lg);
+  overscroll-behavior: contain;
+  touch-action: none;
+}
+
+@include down(lg) {
+  .title {
+    display: none;
+  }
+
+  .menu {
+    display: flex;
+  }
+}
+

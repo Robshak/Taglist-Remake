@@ -1,0 +1,167 @@
+@use "@shared/styles/mixins" as *;
+
+.searchBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+}
+
+.form {
+  display: flex;
+  min-width: 300px;
+  flex: 1;
+  gap: var(--spacing-sm);
+}
+
+.inputWrapper {
+  position: relative;
+  flex: 1;
+}
+
+.icon {
+  position: absolute;
+  top: 50%;
+  left: var(--spacing-md);
+  color: var(--color-text-secondary);
+  pointer-events: none;
+  transform: translateY(-50%);
+}
+
+.input {
+  width: 100%;
+  padding: var(--spacing-md) var(--spacing-md) var(--spacing-md) 2.75rem;
+  font-size: 1rem;
+  background-color: var(--color-bg-secondary);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+
+  &::placeholder {
+    color: var(--color-text-secondary);
+  }
+
+  &:focus {
+    background-color: var(--color-bg);
+    border-color: var(--color-primary);
+  }
+
+  &:disabled {
+    opacity: 60%;
+    cursor: not-allowed;
+  }
+}
+
+.button,
+.popular {
+  padding: var(--spacing-md) var(--spacing-xl);
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-fast);
+
+  &:disabled {
+    opacity: 50%;
+    cursor: not-allowed;
+  }
+}
+
+.button {
+  color: white;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+.popular {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  color: var(--color-text);
+  background-color: var(--color-bg-secondary);
+  border: 2px solid var(--color-border);
+
+  &:hover:not(:disabled) {
+    background-color: var(--color-bg);
+    border-color: var(--color-primary);
+  }
+}
+
+@include down(md) {
+  .searchBar {
+    gap: var(--spacing-sm);
+  }
+
+  .form {
+    min-width: 0;
+    gap: var(--spacing-xs);
+  }
+
+  .input {
+    padding: var(--spacing-sm) var(--spacing-sm) var(--spacing-sm) 2.25rem;
+    font-size: 0.95rem;
+  }
+
+  .icon {
+    left: var(--spacing-sm);
+  }
+
+  .button,
+  .popular {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: 0.95rem;
+  }
+}
+
+@include down(sm) {
+  .searchBar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-sm);
+    grid-template-areas:
+      "input input"
+      "submit popular";
+  }
+
+  .form {
+    display: contents;
+    width: 100%;
+    gap: var(--spacing-xs);
+  }
+
+  .inputWrapper {
+    width: 100%;
+    grid-area: input;
+  }
+
+  .input {
+    padding: .6rem .75rem .6rem 2.1rem;
+    font-size: 0.9rem;
+  }
+
+  .icon {
+    left: .6rem;
+  }
+
+  .button,
+  .popular {
+    width: 100%;
+    padding: .55rem .9rem;
+    justify-content: center;
+    font-size: 0.9rem;
+  }
+
+  .button {
+    grid-area: submit;
+  }
+
+  .popular {
+    grid-area: popular;
+  }
+}
+
