@@ -7,7 +7,27 @@
   flex-direction: column;
 }
 
+.playerBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: none;
+  background: linear-gradient(
+    to top,
+    rgb(0 0 0 / 65%) 0%,
+    rgb(0 0 0 / 45%) 50px,
+    rgb(0 0 0 / 15%) 80px,
+    transparent 110px
+  );
+  pointer-events: none;
+
+  @include down(lg) {
+    display: block;
+  }
+}
+
 .container {
+  position: relative;
   display: grid;
   overflow: hidden;
   flex: 1;
@@ -19,6 +39,8 @@
 }
 
 .main {
+  position: relative;
+  z-index: 1;
   display: flex;
   overflow: hidden;
   flex-direction: column;
@@ -49,6 +71,9 @@
 }
 
 .sidebar {
+  position: relative;
+  z-index: 999;
+
   @include down(lg) {
     display: none;
   }

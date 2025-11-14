@@ -66,15 +66,6 @@ export const usePlaylistStore = create<IPlaylistState>()(
               : [];
         if (effectiveBlocks.length === 0) return null;
 
-        const tracks = useTrackStore.getState().getLibraryTracks();
-        let matched: ITrack[] = [];
-        if (effectiveBlocks.length === 1) {
-          matched = filterTracksByTags(tracks, effectiveBlocks[0], TagOperation.INTERSECTION);
-        } else {
-          matched = filterTracksByTagBlocks(tracks, effectiveBlocks);
-        }
-        const trackIds = matched.map((t) => t.id);
-
         const id = Math.random().toString(36).slice(2);
         const playlist: IPlaylistSettings = {
           id,
@@ -87,7 +78,6 @@ export const usePlaylistStore = create<IPlaylistState>()(
             : effectiveBlocks[0].length > 1
               ? TagOperation.INTERSECTION
               : TagOperation.UNION) as TTagOperation,
-          trackIds,
           createdAt: Date.now(),
         };
 
@@ -141,6 +131,28 @@ export const usePlaylistStore = create<IPlaylistState>()(
       name: 'playlist-store',
       storage: createThrottledStorage(1000),
       partialize: (s) => ({ playlists: s.playlists, activePlaylistId: s.activePlaylistId }),
+      version: 1,
+      migrate: (persistedState: unknown) => {
+        if (persistedState && typeof persistedState === 'object' && 'playlists' in persistedState) {
+          const state = persistedState as {
+            playlists: Record<TPlaylistId, IPlaylistSettings & { trackIds?: string[] }>;
+          };
+          const migratedPlaylists: Record<TPlaylistId, IPlaylistSettings> = {};
+          for (const [id, playlist] of Object.entries(state.playlists)) {
+            migratedPlaylists[id] = {
+              id: playlist.id,
+              name: playlist.name,
+              isFavorite: playlist.isFavorite,
+              tags: playlist.tags,
+              operation: playlist.operation,
+              createdAt: playlist.createdAt,
+              tagBlocks: playlist.tagBlocks,
+            };
+          }
+          return { ...state, playlists: migratedPlaylists };
+        }
+        return persistedState;
+      },
     }
   )
 );

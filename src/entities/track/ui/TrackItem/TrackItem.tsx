@@ -4,6 +4,7 @@ import { formatDuration, useOptimizedImage } from '@shared/lib/helpers.ts';
 import PlayIcon from '@shared/svg/Play.svg?react';
 import type { ITrack } from '@shared/types';
 import { Equalizer, Icon, TagsLine } from '@shared/ui';
+import { useMobileDetect } from '@widgets/player/model/useMobileDetect';
 import { motion } from 'motion/react';
 import { lazy, memo, Suspense, useCallback, useState } from 'react';
 
@@ -26,6 +27,7 @@ const TrackItemComponent = ({ track, index, isFirst = false }: ITrackItemProps) 
   const setIsPlaying = usePlayerStore((state) => state.setIsPlaying);
 
   const [showTagsManager, setShowTagsManager] = useState(false);
+  const isMobile = useMobileDetect();
 
   const { imgRef, loaded: imageLoaded, shouldLoad, onLoad } = useOptimizedImage(track.imageUrl);
 
@@ -80,8 +82,8 @@ const TrackItemComponent = ({ track, index, isFirst = false }: ITrackItemProps) 
       <motion.div
         className={`${s.trackItem} ${isCurrentTrack ? s.active : ''}`}
         {...motionProps}
-        onClick={handleSingleClick}
-        onDoubleClick={handleDoubleClick}
+        onClick={isMobile ? handleSingleClick : undefined}
+        onDoubleClick={!isMobile ? handleDoubleClick : undefined}
       >
         <div className={s.info}>
           {track.imageUrl && (

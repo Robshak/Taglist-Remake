@@ -1,5 +1,6 @@
 import { useHistoryStore } from '@entities/history';
 import { useThemeStore } from '@entities/theme';
+import { useTrackStore } from '@entities/track';
 import { Header } from '@widgets/header';
 import { Player } from '@widgets/player';
 import { SearchBar } from '@widgets/search-bar';
@@ -12,6 +13,7 @@ import s from './App.module.scss';
 function App() {
   const initTheme = useThemeStore((state) => state.initThemeFromStorage);
   const initHistory = useHistoryStore((state) => state.initHistoryFromStorage);
+  const currentTrack = useTrackStore((state) => state.currentTrack);
 
   useEffect(() => {
     initTheme?.();
@@ -20,6 +22,7 @@ function App() {
 
   return (
     <div className={s.app}>
+      {currentTrack && <div className={s.playerBackdrop} />}
       <div className={s.container}>
         <main className={s.main}>
           <Header />
