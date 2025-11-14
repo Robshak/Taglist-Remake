@@ -3,6 +3,7 @@ import type { TTagOperation, ITrack } from '@shared/types';
 export { useDebounce, debounce } from './hooks/useDebounce';
 export { useReducedMotion } from './hooks/useReducedMotion';
 export { useDevicePerformance } from './hooks/useDevicePerformance';
+export { useMobileDetect } from './hooks/useMobileDetect';
 export {
   useOptimizedImage,
   generateImageSrcSet,

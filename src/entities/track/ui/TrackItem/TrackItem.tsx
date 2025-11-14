@@ -1,10 +1,9 @@
 import { usePlayerStore } from '@entities/player';
 import { useTrackStore } from '@entities/track';
-import { formatDuration, useOptimizedImage } from '@shared/lib/helpers.ts';
+import { formatDuration, useMobileDetect, useOptimizedImage } from '@shared/lib/helpers.ts';
 import PlayIcon from '@shared/svg/Play.svg?react';
 import type { ITrack } from '@shared/types';
 import { Equalizer, Icon, TagsLine } from '@shared/ui';
-import { useMobileDetect } from '@widgets/player/model/useMobileDetect';
 import { motion } from 'motion/react';
 import { lazy, memo, Suspense, useCallback, useState } from 'react';
 
