@@ -1,6 +1,6 @@
 import { usePlayerStore } from '@entities/player';
 import { useTrackStore } from '@entities/track';
-import { TrackTagsManager } from '@shared/ui';
+import { TrackTagsManager } from '@widgets/TrackTagsManager';
 import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useMemo, useState } from 'react';
 

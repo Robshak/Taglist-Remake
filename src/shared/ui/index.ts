@@ -1,9 +1,5 @@
 export { Icon } from './Icon';
-export { EditableTag } from '@entities/tag/ui/EditableTag';
 export { Modal } from './Modal';
 export { Slider } from './Slider';
 export { Equalizer } from './Equalizer';
 export { TagPill } from './TagPill';
-export { TagsLine } from '@entities/tag/ui/TagsLine';
-export { TrackItem } from '@entities/track/ui/TrackItem';
-export { TrackTagsManager } from '@widgets/TrackTagsManager/ui';

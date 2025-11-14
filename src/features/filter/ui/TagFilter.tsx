@@ -4,7 +4,8 @@ import ChevronDownIcon from '@shared/svg/ChevronDown.svg?react';
 import SaveIcon from '@shared/svg/Save.svg?react';
 import TagIcon from '@shared/svg/Tag.svg?react';
 import TrashIcon from '@shared/svg/Trash.svg?react';
-import { Icon, TrackTagsManager } from '@shared/ui';
+import { Icon } from '@shared/ui';
+import { TrackTagsManager } from '@widgets/TrackTagsManager';
 import { AnimatePresence, motion } from 'motion/react';
 import { useState } from 'react';
 

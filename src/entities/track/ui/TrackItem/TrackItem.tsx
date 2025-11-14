@@ -1,16 +1,17 @@
 import { usePlayerStore } from '@entities/player';
+import { TagsLine } from '@entities/tag';
 import { useTrackStore } from '@entities/track';
 import { formatDuration, useMobileDetect, useOptimizedImage } from '@shared/lib/helpers.ts';
 import PlayIcon from '@shared/svg/Play.svg?react';
 import type { ITrack } from '@shared/types';
-import { Equalizer, Icon, TagsLine } from '@shared/ui';
+import { Equalizer, Icon } from '@shared/ui';
 import { motion } from 'motion/react';
 import { lazy, memo, Suspense, useCallback, useState } from 'react';
 
 import s from './TrackItem.module.scss';
 
 const LazyTrackTagsManager = lazy(() =>
-  import('@shared/ui').then((module) => ({ default: module.TrackTagsManager }))
+  import('@widgets/TrackTagsManager').then((module) => ({ default: module.TrackTagsManager }))
 );
 
 interface ITrackItemProps {
