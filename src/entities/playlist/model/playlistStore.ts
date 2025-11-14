@@ -1,5 +1,6 @@
 import { useTrackStore } from '@entities/track/model/trackStore';
 import { filterTracksByTags, filterTracksByTagBlocks } from '@shared/lib/helpers';
+import { createThrottledStorage } from '@shared/lib/throttledStorage';
 import { type TTagOperation, type ITrack } from '@shared/types';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
@@ -138,6 +139,7 @@ export const usePlaylistStore = create<IPlaylistState>()(
     }),
     {
       name: 'playlist-store',
+      storage: createThrottledStorage(1000),
       partialize: (s) => ({ playlists: s.playlists, activePlaylistId: s.activePlaylistId }),
     }
   )

@@ -1,6 +1,8 @@
+import { createThrottledStorage } from '@shared/lib/throttledStorage';
 import type { ITrack } from '@shared/types';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { immer } from 'zustand/middleware/immer';
 
 interface ITrackState {
   tracks: ITrack[];
@@ -22,7 +24,7 @@ interface ITrackState {
 
 export const useTrackStore = create<ITrackState>()(
   persist(
-    (set, get) => ({
+    immer((set, get) => ({
       tracks: [],
       libraryTracks: [],
       currentTrack: null,
@@ -50,144 +52,150 @@ export const useTrackStore = create<ITrackState>()(
             }
           }
 
-          return {
-            ...state,
-            tracks: mergedIncoming,
-            libraryTracks: newLibrary,
-            allCustomTags: Array.from(allTags),
-          };
+          state.tracks = mergedIncoming;
+          state.libraryTracks = newLibrary;
+          state.allCustomTags = Array.from(allTags);
         }),
-      setCurrentTrack: (track) => set({ currentTrack: track }),
+      setCurrentTrack: (track) =>
+        set((state) => {
+          state.currentTrack = track;
+        }),
       playNext: () =>
         set((state) => {
-          if (!state.currentTrack || state.tracks.length === 0) return state;
+          if (!state.currentTrack || state.tracks.length === 0) return;
           const idx = state.tracks.findIndex((t) => t.id === state.currentTrack!.id);
           const nextIdx = (idx + 1) % state.tracks.length;
-          return { ...state, currentTrack: state.tracks[nextIdx] };
+          state.currentTrack = state.tracks[nextIdx];
         }),
       playPrevious: () =>
         set((state) => {
-          if (!state.currentTrack || state.tracks.length === 0) return state;
+          if (!state.currentTrack || state.tracks.length === 0) return;
           const idx = state.tracks.findIndex((t) => t.id === state.currentTrack!.id);
           const prevIdx = idx === 0 ? state.tracks.length - 1 : idx - 1;
-          return { ...state, currentTrack: state.tracks[prevIdx] };
+          state.currentTrack = state.tracks[prevIdx];
         }),
       addTrackCustomTag: (trackId, tag) =>
         set((state) => {
-          const ensure = (arr: ITrack[]) =>
-            arr.map((t) => {
-              if (t.id !== trackId) return t;
-              const setTags = new Set(t.customTags || []);
-              setTags.add(tag);
-              return { ...t, customTags: Array.from(setTags) };
-            });
-          const updatedTracks = ensure(state.tracks);
-          const updatedLibrary = ensure(state.libraryTracks);
-          const updatedCurrent =
-            state.currentTrack?.id === trackId
-              ? updatedTracks.find((t) => t.id === trackId) || state.currentTrack
-              : state.currentTrack;
-          const allCustomTags = state.allCustomTags.includes(tag)
-            ? state.allCustomTags
-            : [...state.allCustomTags, tag];
-          return {
-            ...state,
-            tracks: updatedTracks,
-            libraryTracks: updatedLibrary,
-            currentTrack: updatedCurrent || null,
-            allCustomTags,
-          };
+          const track = state.tracks.find((t) => t.id === trackId);
+          if (track && !track.customTags?.includes(tag)) {
+            if (!track.customTags) track.customTags = [];
+            track.customTags.push(tag);
+          }
+
+          const libTrack = state.libraryTracks.find((t) => t.id === trackId);
+          if (libTrack && !libTrack.customTags?.includes(tag)) {
+            if (!libTrack.customTags) libTrack.customTags = [];
+            libTrack.customTags.push(tag);
+          }
+
+          if (state.currentTrack?.id === trackId && !state.currentTrack.customTags?.includes(tag)) {
+            if (!state.currentTrack.customTags) state.currentTrack.customTags = [];
+            state.currentTrack.customTags.push(tag);
+          }
+
+          if (!state.allCustomTags.includes(tag)) {
+            state.allCustomTags.push(tag);
+          }
         }),
       removeTrackCustomTag: (trackId, tag) =>
         set((state) => {
-          const strip = (arr: ITrack[]) =>
-            arr.map((t) =>
-              t.id === trackId
-                ? { ...t, customTags: (t.customTags || []).filter((ct: string) => ct !== tag) }
-                : t
+          const track = state.tracks.find((t) => t.id === trackId);
+          if (track?.customTags) {
+            track.customTags = track.customTags.filter((ct) => ct !== tag);
+          }
+
+          const libTrack = state.libraryTracks.find((t) => t.id === trackId);
+          if (libTrack?.customTags) {
+            libTrack.customTags = libTrack.customTags.filter((ct) => ct !== tag);
+          }
+
+          if (state.currentTrack?.id === trackId && state.currentTrack.customTags) {
+            state.currentTrack.customTags = state.currentTrack.customTags.filter(
+              (ct) => ct !== tag
             );
-          const updatedTracks = strip(state.tracks);
-          const updatedLibrary = strip(state.libraryTracks);
-          const updatedCurrent =
-            state.currentTrack?.id === trackId
-              ? updatedTracks.find((t) => t.id === trackId) || state.currentTrack
-              : state.currentTrack;
-          return {
-            ...state,
-            tracks: updatedTracks,
-            libraryTracks: updatedLibrary,
-            currentTrack: updatedCurrent || null,
-          };
+          }
         }),
       createCustomTag: (tag) =>
-        set((state) =>
-          state.allCustomTags.includes(tag)
-            ? state
-            : { ...state, allCustomTags: [...state.allCustomTags, tag] }
-        ),
+        set((state) => {
+          if (!state.allCustomTags.includes(tag)) {
+            state.allCustomTags.push(tag);
+          }
+        }),
       deleteCustomTag: (tag) =>
         set((state) => {
-          const purge = (arr: ITrack[]) =>
-            arr.map((t) =>
-              t.customTags
-                ? { ...t, customTags: t.customTags.filter((ct: string) => ct !== tag) }
-                : t
+          state.tracks.forEach((t) => {
+            if (t.customTags) {
+              t.customTags = t.customTags.filter((ct) => ct !== tag);
+            }
+          });
+
+          state.libraryTracks.forEach((t) => {
+            if (t.customTags) {
+              t.customTags = t.customTags.filter((ct) => ct !== tag);
+            }
+          });
+
+          if (state.currentTrack?.customTags) {
+            state.currentTrack.customTags = state.currentTrack.customTags.filter(
+              (ct) => ct !== tag
             );
-          const updatedTracks = purge(state.tracks);
-          const updatedLibrary = purge(state.libraryTracks);
-          const updatedCurrent = state.currentTrack
-            ? updatedTracks.find((t) => t.id === state.currentTrack!.id) || null
-            : null;
-          return {
-            ...state,
-            tracks: updatedTracks,
-            libraryTracks: updatedLibrary,
-            currentTrack: updatedCurrent,
-            allCustomTags: state.allCustomTags.filter((ct) => ct !== tag),
-          };
+          }
+
+          state.allCustomTags = state.allCustomTags.filter((ct) => ct !== tag);
         }),
       renameCustomTag: (oldTag, newTag) =>
         set((state) => {
-          if (oldTag === newTag || state.allCustomTags.includes(newTag)) return state;
+          if (oldTag === newTag || state.allCustomTags.includes(newTag)) return;
 
-          const rename = (arr: ITrack[]) =>
-            arr.map((t) => {
-              if (!t.customTags || !t.customTags.includes(oldTag)) return t;
-              return {
-                ...t,
-                customTags: t.customTags.map((ct: string) => (ct === oldTag ? newTag : ct)),
-              };
-            });
+          state.tracks.forEach((t) => {
+            if (t.customTags?.includes(oldTag)) {
+              t.customTags = t.customTags.map((ct) => (ct === oldTag ? newTag : ct));
+            }
+          });
 
-          const updatedTracks = rename(state.tracks);
-          const updatedLibrary = rename(state.libraryTracks);
-          const updatedCurrent = state.currentTrack?.customTags?.includes(oldTag)
-            ? {
-                ...state.currentTrack,
-                customTags: state.currentTrack.customTags.map((ct: string) =>
-                  ct === oldTag ? newTag : ct
-                ),
-              }
-            : state.currentTrack;
+          state.libraryTracks.forEach((t) => {
+            if (t.customTags?.includes(oldTag)) {
+              t.customTags = t.customTags.map((ct) => (ct === oldTag ? newTag : ct));
+            }
+          });
 
-          const allCustomTags = state.allCustomTags.map((t: string) => (t === oldTag ? newTag : t));
+          if (state.currentTrack?.customTags?.includes(oldTag)) {
+            state.currentTrack.customTags = state.currentTrack.customTags.map((ct) =>
+              ct === oldTag ? newTag : ct
+            );
+          }
 
-          return {
-            ...state,
-            tracks: updatedTracks,
-            libraryTracks: updatedLibrary,
-            currentTrack: updatedCurrent,
-            allCustomTags,
-          };
+          const idx = state.allCustomTags.indexOf(oldTag);
+          if (idx !== -1) {
+            state.allCustomTags[idx] = newTag;
+          }
         }),
-      getAvailableTags: (): string[] => {
-        const state = get();
-        return Array.from(new Set<string>(state.allCustomTags)).sort();
-      },
+      getAvailableTags: (() => {
+        let cachedTags: string[] | null = null;
+        let lastAllCustomTags: string[] | null = null;
+
+        return (): string[] => {
+          const state = get();
+
+          if (
+            cachedTags &&
+            lastAllCustomTags &&
+            lastAllCustomTags.length === state.allCustomTags.length &&
+            lastAllCustomTags.every((tag, idx) => tag === state.allCustomTags[idx])
+          ) {
+            return cachedTags;
+          }
+
+          lastAllCustomTags = [...state.allCustomTags];
+          cachedTags = Array.from(new Set<string>(state.allCustomTags)).sort();
+          return cachedTags;
+        };
+      })(),
       getLibraryTracks: () => get().libraryTracks,
-    }),
+    })),
     {
       name: 'track-store',
+      storage: createThrottledStorage(1000),
       partialize: (state) => ({
         tracks: state.tracks,
         libraryTracks: state.libraryTracks,

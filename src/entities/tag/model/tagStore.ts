@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-interface TagState {
+interface ITagState {
   allTags: string[];
   activeTags: string[];
   setAllTags: (tags: string[]) => void;
@@ -10,7 +10,7 @@ interface TagState {
   clearActiveTags: () => void;
 }
 
-export const useTagStore = create<TagState>()(
+export const useTagStore = create<ITagState>()(
   persist(
     (set) => ({
       allTags: [],

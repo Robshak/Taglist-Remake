@@ -1,4 +1,4 @@
-@use "@shared/styles/_mixins.scss" as *;
+@use '@shared/styles/_mixins.scss' as *;
 
 .block {
   position: relative;
@@ -62,7 +62,6 @@
   }
 }
 
-// Responsive
 @include down(sm) {
   .pill {
     padding: 2px 6px;

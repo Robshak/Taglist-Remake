@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { memo, useCallback } from 'react';
 
-interface SliderProps {
+interface ISliderProps {
   min: number;
   max: number;
   value: number;
@@ -12,42 +12,39 @@ interface SliderProps {
   ariaLabel?: string;
 }
 
-export const Slider: React.FC<SliderProps> = ({
-  min,
-  max,
-  value,
-  onChange,
-  onCommit,
-  step = 1,
-  className,
-  style,
-  ariaLabel,
-}) => {
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(parseFloat(e.target.value));
-  };
+export const Slider = memo<ISliderProps>(
+  ({ min, max, value, onChange, onCommit, step = 1, className, style, ariaLabel }) => {
+    const handleChange = useCallback(
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        onChange(parseFloat(e.target.value));
+      },
+      [onChange]
+    );
 
-  const handleMouseUp = () => {
-    onCommit?.();
-  };
+    const handleMouseUp = useCallback(() => {
+      onCommit?.();
+    }, [onCommit]);
 
-  const handleTouchEnd = () => {
-    onCommit?.();
-  };
+    const handleTouchEnd = useCallback(() => {
+      onCommit?.();
+    }, [onCommit]);
 
-  return (
-    <input
-      type="range"
-      min={min}
-      max={max}
-      step={step}
-      value={value}
-      onChange={handleChange}
-      onMouseUp={handleMouseUp}
-      onTouchEnd={handleTouchEnd}
-      className={className}
-      style={style}
-      aria-label={ariaLabel}
-    />
-  );
-};
+    return (
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={handleChange}
+        onMouseUp={handleMouseUp}
+        onTouchEnd={handleTouchEnd}
+        className={className}
+        style={style}
+        aria-label={ariaLabel}
+      />
+    );
+  }
+);
+
+Slider.displayName = 'Slider';

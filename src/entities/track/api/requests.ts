@@ -1,10 +1,4 @@
-import {
-  apiClient,
-  convertJamendoTrack,
-  mockTracks,
-  USE_MOCK_DATA,
-  type JamendoResponse,
-} from '@shared/api/jamendo';
+import { jamendoApi, convertJamendoTrack, mockTracks, USE_MOCK_DATA } from '@shared/api/jamendo';
 import type { ITrack } from '@shared/types';
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -25,17 +19,8 @@ export const trackApi = {
     }
 
     try {
-      const response = await apiClient.get<JamendoResponse>('/tracks', {
-        params: {
-          search: query,
-          limit,
-          audioformat: 'mp32',
-          include: 'musicinfo',
-          imagesize: '300',
-        },
-      });
-
-      return response.data.results.map(convertJamendoTrack);
+      const response = await jamendoApi.searchTracks(query, limit);
+      return response.results.map(convertJamendoTrack);
     } catch (error) {
       console.error('Error searching tracks:', error);
       return [];
@@ -49,17 +34,8 @@ export const trackApi = {
     }
 
     try {
-      const response = await apiClient.get<JamendoResponse>('/tracks', {
-        params: {
-          order: 'popularity_total',
-          limit,
-          audioformat: 'mp32',
-          include: 'musicinfo',
-          imagesize: '300',
-        },
-      });
-
-      return response.data.results.map(convertJamendoTrack);
+      const response = await jamendoApi.getPopularTracks(limit);
+      return response.results.map(convertJamendoTrack);
     } catch (error) {
       console.error('Error getting popular tracks:', error);
       return [];

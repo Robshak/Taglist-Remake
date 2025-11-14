@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-interface PlayerState {
+interface IPlayerState {
   volume: number;
   previousVolume: number;
   isLooping: boolean;
@@ -15,7 +15,7 @@ interface PlayerState {
   setIsLooping: (v: boolean) => void;
 }
 
-export const usePlayerStore = create<PlayerState>()(
+export const usePlayerStore = create<IPlayerState>()(
   persist(
     (set) => ({
       volume: 1,

@@ -1,0 +1,55 @@
+.createFormWrapper {
+  overflow: hidden;
+}
+
+.createForm {
+  padding: 0.75rem;
+  background: var(--color-bg-secondary);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.createFields {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  input {
+    padding: 0.5rem 0.7rem;
+    flex: 1;
+    color: var(--color-text);
+    background: var(--color-bg);
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius-md);
+
+    &:focus {
+      border-color: var(--color-primary);
+      outline: none;
+    }
+
+    &.hasError {
+      border-color: #ef4444;
+    }
+  }
+
+  button {
+    padding: 0.5rem 0.8rem;
+    color: #fff;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+  }
+}
+
+.hasError {
+  border-color: #ef4444;
+}
+
+.error {
+  padding-top: 0.4rem;
+  overflow: hidden;
+  font-size: 0.85rem;
+  color: #ef4444;
+}
+

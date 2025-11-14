@@ -38,8 +38,13 @@
   padding: var(--spacing-lg);
   flex: 1;
 
+  @include down(lg) {
+    padding-bottom: calc(120px + var(--safe-area-inset-bottom));
+  }
+
   @include down(md) {
     padding: var(--spacing-md);
+    padding-bottom: calc(120px + var(--safe-area-inset-bottom));
   }
 }
 

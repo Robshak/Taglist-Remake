@@ -1,0 +1,75 @@
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tag {
+  display: inline-flex;
+  padding: 0.25rem 0.6rem;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--color-text);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+
+  > span {
+    cursor: pointer;
+    user-select: none;
+  }
+
+  button {
+    display: inline-flex;
+    width: 22px;
+    height: 22px;
+    justify-content: center;
+    align-items: center;
+    color: currentColor;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-full);
+    outline: none;
+    transition:
+      background-color var(--transition-fast),
+      color var(--transition-fast),
+      border-color var(--transition-fast);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+.tagActive {
+  color: #fff;
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+
+  > button {
+    color: #ef4444;
+
+    svg {
+      color: #ef4444;
+    }
+
+    &:hover {
+      color: #fff;
+      background: #ef4444;
+
+      svg {
+        color: #fff;
+      }
+    }
+  }
+}
+
+.empty {
+  display: inline-block;
+  padding: 0.5rem 0.75rem;
+  color: var(--color-text-secondary);
+  background: var(--color-bg-secondary);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+}
+

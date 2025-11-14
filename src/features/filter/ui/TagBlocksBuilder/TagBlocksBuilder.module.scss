@@ -1,4 +1,4 @@
-@use "@shared/styles/_mixins.scss" as *;
+@use '@shared/styles/_mixins.scss' as *;
 
 .tagBlocks {
   display: flex;
@@ -73,14 +73,13 @@
   color: var(--color-text-secondary);
 }
 
-// Responsive
 @include down(md) {
   .tags {
     gap: var(--spacing-xs);
   }
 
   .tag {
-    padding: .35rem .6rem;
+    padding: 0.35rem 0.6rem;
     font-size: 0.7rem;
   }
 }
@@ -95,7 +94,7 @@
   }
 
   .tag {
-    padding: .3rem .5rem;
+    padding: 0.3rem 0.5rem;
     font-size: 0.65rem;
   }
 
@@ -103,4 +102,3 @@
     font-size: 0.65rem;
   }
 }
-

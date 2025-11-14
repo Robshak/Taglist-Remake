@@ -1,16 +1,16 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-type ThemeMode = 'light' | 'dark' | 'system';
+type TThemeMode = 'light' | 'dark' | 'system';
 
-interface ThemeState {
-  theme: ThemeMode;
-  setTheme: (mode: ThemeMode) => void;
+interface IThemeState {
+  theme: TThemeMode;
+  setTheme: (mode: TThemeMode) => void;
   toggleTheme: () => void;
   initThemeFromStorage?: () => void;
 }
 
-const applyThemeDom = (mode: ThemeMode) => {
+const applyThemeDom = (mode: TThemeMode) => {
   const resolved =
     mode === 'system'
       ? window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -20,7 +20,7 @@ const applyThemeDom = (mode: ThemeMode) => {
   document.documentElement.setAttribute('data-theme', resolved);
 };
 
-export const useThemeStore = create<ThemeState>()(
+export const useThemeStore = create<IThemeState>()(
   persist(
     (set, get) => ({
       theme: 'dark',

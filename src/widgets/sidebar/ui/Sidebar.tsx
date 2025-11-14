@@ -3,16 +3,17 @@ import { useSearchStore } from '@entities/search';
 import { useTrackStore } from '@entities/track';
 import { useFilterStore } from '@features/filter';
 import { motion } from 'motion/react';
+import { useMemo } from 'react';
 
 import s from './Sidebar.module.scss';
 import { useI18n } from '../lib';
 import { PlaylistItem } from './PlaylistItem';
 
-interface SidebarProps {
+interface ISidebarProps {
   onClose?: () => void;
 }
 
-export const Sidebar = ({ onClose }: SidebarProps) => {
+export const Sidebar = ({ onClose }: ISidebarProps) => {
   const { t } = useI18n();
 
   const playlists = usePlaylistStore((state) => state.playlists);
@@ -21,11 +22,14 @@ export const Sidebar = ({ onClose }: SidebarProps) => {
   const getTracksForPlaylist = usePlaylistStore((state) => state.getTracksForPlaylist);
   const activePlaylistId = usePlaylistStore((state) => state.activePlaylistId);
 
-  const { setTracks } = useTrackStore();
-  const { resetFilter } = useFilterStore();
-  const { clearSearch } = useSearchStore();
+  const setTracks = useTrackStore((state) => state.setTracks);
+  const resetFilter = useFilterStore((state) => state.resetFilter);
+  const clearSearch = useSearchStore((state) => state.clearSearch);
 
-  const favoritesArray = Object.values(playlists).filter((p) => p.isFavorite);
+  const favoritesArray = useMemo(
+    () => Object.values(playlists).filter((p) => p.isFavorite),
+    [playlists]
+  );
 
   const handleLoadFavorite = (id: string) => {
     const playlist = playlists[id];

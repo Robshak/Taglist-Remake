@@ -2,57 +2,62 @@ import React from 'react';
 
 import { useI18n } from '../../lib';
 
-interface EditableTagProps {
+interface ITagState {
   label: string;
   isActive: boolean;
   isEditing: boolean;
   editingValue: string;
-  onChangeEditingValue: (v: string) => void;
+}
+
+interface ITagHandlers {
   onToggleActive: () => void;
   onEditStart: () => void;
   onEditSave: () => void;
   onEditCancel: () => void;
   onDelete: () => void;
-  className: string;
-  activeClassName?: string;
-  editingClassName?: string;
-  inputClassName?: string;
-  editBtnClassName?: string;
-  deleteBtnClassName?: string;
-  saveBtnClassName?: string;
-  cancelBtnClassName?: string;
-  editIcon?: React.ReactNode;
-  deleteIcon?: React.ReactNode;
-  saveIcon?: React.ReactNode;
-  cancelIcon?: React.ReactNode;
+  onChangeEditingValue: (v: string) => void;
 }
 
-export const EditableTag: React.FC<EditableTagProps> = ({
-  label,
-  isActive,
-  isEditing,
-  editingValue,
-  onChangeEditingValue,
-  onToggleActive,
-  onEditStart,
-  onEditSave,
-  onEditCancel,
-  onDelete,
-  className,
-  activeClassName,
-  editingClassName,
-  inputClassName,
-  editBtnClassName,
-  deleteBtnClassName,
-  saveBtnClassName,
-  cancelBtnClassName,
-  editIcon,
-  deleteIcon,
-  saveIcon,
-  cancelIcon,
+interface ITagClassNames {
+  base: string;
+  active?: string;
+  editing?: string;
+  input?: string;
+  editBtn?: string;
+  deleteBtn?: string;
+  saveBtn?: string;
+  cancelBtn?: string;
+}
+
+interface ITagIcons {
+  edit?: React.ReactNode;
+  delete?: React.ReactNode;
+  save?: React.ReactNode;
+  cancel?: React.ReactNode;
+}
+
+interface IEditableTagProps {
+  tagState: ITagState;
+  handlers: ITagHandlers;
+  classNames: ITagClassNames;
+  icons: ITagIcons;
+}
+
+const EditableTagComponent: React.FC<IEditableTagProps> = ({
+  tagState,
+  handlers,
+  classNames,
+  icons,
 }) => {
   const { t } = useI18n();
-  const classes = [className, isActive ? activeClassName : '', isEditing ? editingClassName : '']
+  const { label, isActive, isEditing, editingValue } = tagState;
+  const { onToggleActive, onEditStart, onEditSave, onEditCancel, onDelete, onChangeEditingValue } =
+    handlers;
+  const classes = [
+    classNames.base,
+    isActive ? classNames.active : '',
+    isEditing ? classNames.editing : '',
+  ]
     .filter(Boolean)
     .join(' ');
 
@@ -69,27 +74,33 @@ export const EditableTag: React.FC<EditableTagProps> = ({
               if (e.key === 'Escape') onEditCancel();
             }}
             onClick={(e) => e.stopPropagation()}
-            className={inputClassName}
+            className={classNames.input}
             autoFocus
           />
-          <button onClick={onEditSave} title={t('buttons.save')} className={saveBtnClassName}>
-            {saveIcon}
+          <button onClick={onEditSave} title={t('buttons.save')} className={classNames.saveBtn}>
+            {icons.save}
           </button>
-          <button onClick={onEditCancel} title={t('buttons.cancel')} className={cancelBtnClassName}>
-            {cancelIcon}
+          <button
+            onClick={onEditCancel}
+            title={t('buttons.cancel')}
+            className={classNames.cancelBtn}
+          >
+            {icons.cancel}
           </button>
         </>
       ) : (
         <>
           <span onClick={onToggleActive}>{label}</span>
-          <button onClick={onEditStart} title={t('buttons.edit')} className={editBtnClassName}>
-            {editIcon}
+          <button onClick={onEditStart} title={t('buttons.edit')} className={classNames.editBtn}>
+            {icons.edit}
           </button>
-          <button onClick={onDelete} title={t('buttons.delete')} className={deleteBtnClassName}>
-            {deleteIcon}
+          <button onClick={onDelete} title={t('buttons.delete')} className={classNames.deleteBtn}>
+            {icons.delete}
           </button>
         </>
       )}
     </div>
   );
 };
+
+export const EditableTag = React.memo(EditableTagComponent);

@@ -1,11 +1,11 @@
 import React from 'react';
 
-interface EqualizerProps {
+interface IEqualizerProps {
   className?: string;
   barClassName?: string;
 }
 
-export const Equalizer: React.FC<EqualizerProps> = ({ className, barClassName }) => {
+export const Equalizer: React.FC<IEqualizerProps> = React.memo(({ className, barClassName }) => {
   return (
     <div className={className}>
       <span className={barClassName}></span>
@@ -13,4 +13,4 @@ export const Equalizer: React.FC<EqualizerProps> = ({ className, barClassName })
       <span className={barClassName}></span>
     </div>
   );
-};
+});

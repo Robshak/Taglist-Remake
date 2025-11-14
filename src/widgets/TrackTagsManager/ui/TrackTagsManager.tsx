@@ -1,7 +1,4 @@
-import { usePlaylistStore } from '@entities/playlist';
 import { EditableTag } from '@entities/tag';
-import { useTrackStore } from '@entities/track';
-import { useFilterStore } from '@features/filter';
 import CheckIcon from '@shared/svg/Check.svg?react';
 import EditIcon from '@shared/svg/Pencil.svg?react';
 import DeleteIcon from '@shared/svg/Trash.svg?react';
@@ -9,11 +6,13 @@ import CloseIcon from '@shared/svg/X.svg?react';
 import type { ITrack } from '@shared/types';
 import { Icon } from '@shared/ui';
 import { AnimatePresence, motion } from 'motion/react';
-import { useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import s from './TrackTagsManager.module.scss';
 import { useI18n } from '../lib';
+import { useTagManager } from '../model';
+import { ActiveTagsList } from './ActiveTagsList';
+import { CreateTagForm } from './CreateTagForm';
+import s from './TrackTagsManager.module.scss';
 
 interface ITrackTagsManagerProps {
   track?: ITrack;
@@ -24,76 +23,29 @@ export const TrackTagsManager = ({ track, onClose }: ITrackTagsManagerProps) => 
   const { t } = useI18n();
   const {
     allCustomTags,
-    addTrackCustomTag,
-    removeTrackCustomTag,
-    createCustomTag,
-    deleteCustomTag,
-    renameCustomTag,
-  } = useTrackStore();
-  const { renameTagInFilter } = useFilterStore();
-  const { renameTagInPlaylists } = usePlaylistStore();
-  const [newTagName, setNewTagName] = useState('');
-  const [showCreateTag, setShowCreateTag] = useState(false);
-  const [tagError, setTagError] = useState<string | null>(null);
-  const [editingTagId, setEditingTagId] = useState<string | null>(null);
-  const [editingTagName, setEditingTagName] = useState('');
+    trackCustomTags,
+    newTagName,
+    setNewTagName,
+    showCreateTag,
+    tagError,
+    editingTagId,
+    editingTagName,
+    setEditingTagName,
+    handleAddTag,
+    handleRemoveTag,
+    handleCreateTag,
+    handleDeleteTag,
+    handleStartEdit,
+    handleSaveEdit,
+    handleCancelEdit,
+    toggleCreateForm,
+    clearTagError,
+  } = useTagManager(track);
 
-  const trackCustomTags = track?.customTags || [];
-
-  const handleAddTag = (tag: string) => {
-    if (!track) return;
-    addTrackCustomTag(track.id, tag);
-  };
-
-  const handleRemoveTag = (tag: string) => {
-    if (!track) return;
-    removeTrackCustomTag(track.id, tag);
-  };
-
-  const handleCreateTag = () => {
-    const trimmedTag = newTagName.trim();
-    if (!trimmedTag) return;
-    if (allCustomTags.includes(trimmedTag)) {
-      setTagError(t('errors.tagExists'));
-      return;
-    }
-    createCustomTag(trimmedTag);
-    if (track) addTrackCustomTag(track.id, trimmedTag);
-    setNewTagName('');
-    setShowCreateTag(false);
-    setTagError(null);
-  };
-
-  const handleDeleteTag = (tag: string) => {
+  const onDeleteTagWithConfirm = (tag: string) => {
     if (confirm(t('buttons.delete', { tag }))) {
-      deleteCustomTag(tag);
+      handleDeleteTag(tag);
     }
-  };
-
-  const handleStartEdit = (tag: string) => {
-    setEditingTagId(tag);
-    setEditingTagName(tag);
-  };
-
-  const handleSaveEdit = (oldTag: string) => {
-    const trimmedNewName = editingTagName.trim();
-    if (trimmedNewName && trimmedNewName !== oldTag) {
-      if (allCustomTags.includes(trimmedNewName)) {
-        setEditingTagId(null);
-        setEditingTagName('');
-        return;
-      }
-      renameCustomTag(oldTag, trimmedNewName);
-      renameTagInFilter(oldTag, trimmedNewName);
-      renameTagInPlaylists(oldTag, trimmedNewName);
-    }
-    setEditingTagId(null);
-    setEditingTagName('');
-  };
-
-  const handleCancelEdit = () => {
-    setEditingTagId(null);
-    setEditingTagName('');
   };
 
   return createPortal(
@@ -129,20 +81,11 @@ export const TrackTagsManager = ({ track, onClose }: ITrackTagsManagerProps) => 
           {track && (
             <div className={s.section}>
               <h4>{t('sections.trackTags.title')}</h4>
-              <div className={s.tags}>
-                {trackCustomTags.length === 0 ? (
-                  <p className={s.empty}>{t('sections.trackTags.empty')}</p>
-                ) : (
-                  trackCustomTags.map((tag: string) => (
-                    <div key={tag} className={`${s.tag} ${s.tagActive}`}>
-                      <span>{tag}</span>
-                      <button onClick={() => handleRemoveTag(tag)}>
-                        <Icon component={CloseIcon} width={16} height={16} />
-                      </button>
-                    </div>
-                  ))
-                )}
-              </div>
+              <ActiveTagsList
+                tags={trackCustomTags}
+                onRemoveTag={handleRemoveTag}
+                emptyMessage={t('sections.trackTags.empty')}
+              />
             </div>
           )}
 
@@ -151,7 +94,7 @@ export const TrackTagsManager = ({ track, onClose }: ITrackTagsManagerProps) => 
               <h4>{t('sections.allTags.title')}</h4>
               <button
                 className={`${s.createBtn} ${showCreateTag ? s.isOpen : ''}`}
-                onClick={() => setShowCreateTag(!showCreateTag)}
+                onClick={toggleCreateForm}
               >
                 {showCreateTag ? t('buttons.cancel') : t('buttons.create')}
               </button>
@@ -159,42 +102,15 @@ export const TrackTagsManager = ({ track, onClose }: ITrackTagsManagerProps) => 
 
             <AnimatePresence>
               {showCreateTag && (
-                <motion.div
-                  className={s.createForm}
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                >
-                  <div className={s.createFields}>
-                    <input
-                      type="text"
-                      placeholder={t('form.placeholder')}
-                      value={newTagName}
-                      onChange={(e) => {
-                        setNewTagName(e.target.value);
-                        if (tagError) setTagError(null);
-                      }}
-                      onKeyPress={(e) => e.key === 'Enter' && handleCreateTag()}
-                      autoFocus
-                      className={tagError ? s.hasError : ''}
-                    />
-                    <button onClick={handleCreateTag} disabled={!newTagName.trim()}>
-                      {t('form.createButton')}
-                    </button>
-                  </div>
-                  <AnimatePresence>
-                    {tagError && (
-                      <motion.div
-                        className={s.error}
-                        initial={{ opacity: 0, y: -4 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -4 }}
-                      >
-                        {tagError}
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.div>
+                <CreateTagForm
+                  newTagName={newTagName}
+                  onNewTagNameChange={setNewTagName}
+                  onSubmit={() => handleCreateTag(t('errors.tagExists'))}
+                  tagError={tagError}
+                  onClearError={clearTagError}
+                  placeholder={t('form.placeholder')}
+                  submitButtonText={t('form.createButton')}
+                />
               )}
             </AnimatePresence>
 
@@ -209,28 +125,36 @@ export const TrackTagsManager = ({ track, onClose }: ITrackTagsManagerProps) => 
                   return (
                     <EditableTag
                       key={tag}
-                      label={tag}
-                      isActive={isActive}
-                      isEditing={isEditing}
-                      editingValue={editingTagName}
-                      onChangeEditingValue={setEditingTagName}
-                      onToggleActive={() => (isActive ? handleRemoveTag(tag) : handleAddTag(tag))}
-                      onEditStart={() => handleStartEdit(tag)}
-                      onEditSave={() => handleSaveEdit(tag)}
-                      onEditCancel={handleCancelEdit}
-                      onDelete={() => handleDeleteTag(tag)}
-                      className={s.tag}
-                      activeClassName={s.tagActive}
-                      editingClassName={s.tagEditing}
-                      inputClassName={s.tagInput}
-                      editBtnClassName={s.editBtn}
-                      deleteBtnClassName={s.deleteTag}
-                      saveBtnClassName={s.saveBtn}
-                      cancelBtnClassName={s.cancelBtn}
-                      editIcon={<Icon component={EditIcon} width={16} height={16} />}
-                      deleteIcon={<Icon component={DeleteIcon} width={16} height={16} />}
-                      saveIcon={<Icon component={CheckIcon} width={16} height={16} />}
-                      cancelIcon={<Icon component={CloseIcon} width={16} height={16} />}
+                      tagState={{
+                        label: tag,
+                        isActive,
+                        isEditing,
+                        editingValue: editingTagName,
+                      }}
+                      handlers={{
+                        onToggleActive: () => (isActive ? handleRemoveTag(tag) : handleAddTag(tag)),
+                        onEditStart: () => handleStartEdit(tag),
+                        onEditSave: () => handleSaveEdit(tag),
+                        onEditCancel: handleCancelEdit,
+                        onDelete: () => onDeleteTagWithConfirm(tag),
+                        onChangeEditingValue: setEditingTagName,
+                      }}
+                      classNames={{
+                        base: s.tag,
+                        active: s.tagActive,
+                        editing: s.tagEditing,
+                        input: s.tagInput,
+                        editBtn: s.editBtn,
+                        deleteBtn: s.deleteTag,
+                        saveBtn: s.saveBtn,
+                        cancelBtn: s.cancelBtn,
+                      }}
+                      icons={{
+                        edit: <Icon component={EditIcon} width={16} height={16} />,
+                        delete: <Icon component={DeleteIcon} width={16} height={16} />,
+                        save: <Icon component={CheckIcon} width={16} height={16} />,
+                        cancel: <Icon component={CloseIcon} width={16} height={16} />,
+                      }}
                     />
                   );
                 })

@@ -38,7 +38,7 @@
 .items {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md);
+  gap: 0;
 }
 
 @include down(md) {
@@ -59,4 +59,3 @@
     }
   }
 }
-

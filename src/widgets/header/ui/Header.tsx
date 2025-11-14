@@ -9,7 +9,7 @@ import { Sidebar } from '@widgets/sidebar/ui';
 import { motion } from 'motion/react';
 import { useState } from 'react';
 
-import { setLanguage, type Language } from '@/i18n';
+import { setLanguage, type TLanguage } from '@/i18n';
 
 import { useI18n } from '../lib';
 import s from './Header.module.scss';
@@ -21,7 +21,7 @@ export const Header = () => {
   const toggleTheme = useThemeStore((s) => s.toggleTheme);
 
   const toggleLanguage = () => {
-    const nextLang: Language = language === 'en' ? 'ru' : 'en';
+    const nextLang: TLanguage = language === 'en' ? 'ru' : 'en';
     setLanguage(nextLang);
   };
 

@@ -2,7 +2,7 @@ import { AnimatePresence, motion, type MotionProps } from 'motion/react';
 import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 
-interface ModalProps {
+interface IModalProps {
   isOpen: boolean;
   onClose: () => void;
   children: React.ReactNode;
@@ -13,7 +13,7 @@ interface ModalProps {
   overlayMotionProps?: MotionProps;
 }
 
-export const Modal: React.FC<ModalProps> = ({
+export const Modal: React.FC<IModalProps> = ({
   isOpen,
   onClose,
   children,

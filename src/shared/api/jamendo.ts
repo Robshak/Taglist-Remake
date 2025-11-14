@@ -1,5 +1,4 @@
 import type { ITrack } from '@shared/types';
-import axios from 'axios';
 
 const BASE_URL = 'https://api.jamendo.com/v3.0';
 
@@ -10,6 +9,15 @@ if (!CLIENT_ID) {
 }
 
 export const USE_MOCK_DATA = false;
+
+const createApiUrl = (endpoint: string, params: Record<string, string | number>): string => {
+  const searchParams = new URLSearchParams({
+    client_id: CLIENT_ID || '',
+    format: 'json',
+    ...Object.fromEntries(Object.entries(params).map(([k, v]) => [k, String(v)])),
+  });
+  return `${BASE_URL}${endpoint}?${searchParams}`;
+};
 
 export interface JamendoTrack {
   id: string;
@@ -38,14 +46,6 @@ export interface JamendoResponse {
   };
   results: JamendoTrack[];
 }
-
-export const apiClient = axios.create({
-  baseURL: BASE_URL,
-  params: {
-    client_id: CLIENT_ID,
-    format: 'json',
-  },
-});
 
 export const convertJamendoTrack = (jamendoTrack: JamendoTrack): ITrack => {
   const tags: string[] = [];
@@ -174,35 +174,41 @@ export const mockTracks: ITrack[] = [
 
 export const jamendoApi = {
   searchTracks: async (query: string, limit = 20): Promise<JamendoResponse> => {
-    const response = await apiClient.get<JamendoResponse>('/tracks', {
-      params: {
-        limit,
-        search: query,
-        audioformat: 'mp32',
-      },
+    const url = createApiUrl('/tracks', {
+      limit,
+      search: query,
+      audioformat: 'mp32',
     });
-    return response.data;
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Jamendo API error: ${response.status} ${response.statusText}`);
+    }
+    return response.json();
   },
 
   getPopularTracks: async (limit = 20): Promise<JamendoResponse> => {
-    const response = await apiClient.get<JamendoResponse>('/tracks', {
-      params: {
-        limit,
-        order: 'popularity_total',
-        audioformat: 'mp32',
-      },
+    const url = createApiUrl('/tracks', {
+      limit,
+      order: 'popularity_total',
+      audioformat: 'mp32',
     });
-    return response.data;
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Jamendo API error: ${response.status} ${response.statusText}`);
+    }
+    return response.json();
   },
 
   getTracksByTags: async (tags: string[], limit = 50): Promise<JamendoResponse> => {
-    const response = await apiClient.get<JamendoResponse>('/tracks', {
-      params: {
-        limit,
-        tags: tags.join(','),
-        audioformat: 'mp32',
-      },
+    const url = createApiUrl('/tracks', {
+      limit,
+      tags: tags.join(','),
+      audioformat: 'mp32',
     });
-    return response.data;
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Jamendo API error: ${response.status} ${response.statusText}`);
+    }
+    return response.json();
   },
 };

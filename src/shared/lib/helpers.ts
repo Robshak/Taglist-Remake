@@ -1,5 +1,14 @@
 import type { TTagOperation, ITrack } from '@shared/types';
 
+export { useDebounce, debounce } from './hooks/useDebounce';
+export { useReducedMotion } from './hooks/useReducedMotion';
+export { useDevicePerformance } from './hooks/useDevicePerformance';
+export {
+  useOptimizedImage,
+  generateImageSrcSet,
+  getOptimalImageSize,
+} from './hooks/useOptimizedImage';
+
 export const filterTracksByTags = (
   tracks: ITrack[],
   tags: string[],

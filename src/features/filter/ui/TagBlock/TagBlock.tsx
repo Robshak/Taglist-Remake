@@ -6,14 +6,14 @@ import React from 'react';
 import s from './TagBlock.module.scss';
 import { useI18n } from '../../lib';
 
-interface TagBlockProps {
+interface ITagBlockProps {
   tags: string[];
   isActive: boolean;
   onToggle: () => void;
   onDelete: () => void;
 }
 
-export const TagBlock: React.FC<TagBlockProps> = ({ tags, isActive, onToggle, onDelete }) => {
+export const TagBlock: React.FC<ITagBlockProps> = ({ tags, isActive, onToggle, onDelete }) => {
   const { t } = useI18n();
 
   return (

@@ -4,15 +4,13 @@
   display: flex;
   min-width: 0;
   align-items: center;
-
-  /* без искусственного растягивания: если контента мало, кнопка будет сразу после тегов */
 }
 
 .scroll {
   display: inline-flex;
   overflow: hidden;
   min-width: 0;
-  flex: 0 1 auto; /* контейнер занимает ширину контента, но может ужаться при переполнении */
+  flex: 0 1 auto;
   gap: var(--spacing-xs);
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -40,7 +38,7 @@
   }
 
   &.active,
-  &.isEditing { /* potential future state classes */
+  &.isEditing {
     color: var(--color-tag-text-active);
     background-color: var(--color-tag-bg-active);
     border-color: var(--color-tag-bg-active);
@@ -51,7 +49,7 @@
   display: inline-flex;
   width: 24px;
   height: 24px;
-  margin-left: var(--spacing-xs); /* небольшой зазор прямо возле последнего тега */
+  margin-left: var(--spacing-xs);
   flex: 0 0 auto;
   justify-content: center;
   align-items: center;

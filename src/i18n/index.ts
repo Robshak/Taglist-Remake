@@ -14,14 +14,14 @@ export const LANGUAGES = {
   ru: 'Русский',
 } as const;
 
-export type Language = keyof typeof LANGUAGES;
+export type TLanguage = keyof typeof LANGUAGES;
 
-const getBrowserLanguage = (): Language => {
+const getBrowserLanguage = (): TLanguage => {
   const browserLang = navigator.language.split('-')[0];
   return browserLang === 'en' || browserLang === 'ru' ? browserLang : 'ru';
 };
 
-const getSavedLanguage = (): Language => {
+const getSavedLanguage = (): TLanguage => {
   const saved = localStorage.getItem('language');
   if (saved === 'en' || saved === 'ru') {
     return saved;
@@ -54,7 +54,7 @@ export const preloadTranslations = async () => {
   ]);
 };
 
-export const setLanguage = (lang: Language) => {
+export const setLanguage = (lang: TLanguage) => {
   localStorage.setItem('language', lang);
   i18n.changeLanguage(lang);
 };

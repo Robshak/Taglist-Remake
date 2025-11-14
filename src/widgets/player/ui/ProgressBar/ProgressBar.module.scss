@@ -1,0 +1,77 @@
+@use "@shared/styles/mixins" as *;
+
+.progressContainer {
+  display: flex;
+  margin-top: var(--spacing-xs);
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.progressWrapper {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  cursor: pointer;
+}
+
+.progress {
+  width: 100%;
+  height: 4px;
+  border-radius: var(--radius-full);
+  outline: none;
+  cursor: pointer;
+  pointer-events: auto;
+  appearance: none;
+
+  &::-webkit-slider-thumb {
+    width: 12px;
+    height: 12px;
+    background: var(--color-primary);
+    border-radius: 50%;
+    transition: all var(--transition-fast);
+    cursor: pointer;
+    appearance: none;
+
+    &:hover {
+      transform: scale(1.2);
+    }
+  }
+
+  &::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    background: var(--color-primary);
+    border: none;
+    border-radius: 50%;
+    transition: all var(--transition-fast);
+    cursor: pointer;
+
+    &:hover {
+      transform: scale(1.2);
+    }
+  }
+
+  &:hover::-webkit-slider-thumb {
+    transform: scale(1.3);
+  }
+
+  &:hover::-moz-range-thumb {
+    transform: scale(1.3);
+  }
+}
+
+.time {
+  min-width: 36px;
+  font-size: 0.7rem;
+  line-height: 1;
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+@include down(md) {
+  .progress {
+    height: 3px;
+  }
+}
+

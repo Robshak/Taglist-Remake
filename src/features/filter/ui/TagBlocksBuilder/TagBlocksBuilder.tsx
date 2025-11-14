@@ -7,11 +7,11 @@ import { useFilterStore } from '../../model';
 import { TagBlock } from '../TagBlock';
 import s from './TagBlocksBuilder.module.scss';
 
-interface TagBlocksBuilderProps {
+interface ITagBlocksBuilderProps {
   availableTags: string[];
 }
 
-export const TagBlocksBuilder = ({ availableTags }: TagBlocksBuilderProps) => {
+export const TagBlocksBuilder = ({ availableTags }: ITagBlocksBuilderProps) => {
   const { t } = useI18n();
   const { tagBlocks, addTagBlock, addTagToBlock, removeTagFromBlock, deleteTagBlock } =
     useFilterStore();

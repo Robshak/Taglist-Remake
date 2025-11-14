@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import i18n from './index';
 
-type LoaderMap = {
+type TLoaderMap = {
   en: () => Promise<{ default: unknown }>;
   ru: () => Promise<{ default: unknown }>;
 };
@@ -13,7 +13,7 @@ const loadingPromises = new Map<string, Promise<void>>();
 
 export function createLocalNamespace<NS extends string, Keys extends string>(
   namespace: NS,
-  loaders: LoaderMap
+  loaders: TLoaderMap
 ) {
   const loadResources = async () => {
     if (loadedNamespaces.has(namespace)) {

@@ -1,0 +1,81 @@
+@use "@shared/styles/mixins" as *;
+
+.volume {
+  position: static;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--spacing-xs);
+
+  @media (width <= 1024px) {
+    justify-content: flex-end;
+  }
+}
+
+.controlBtn {
+  display: flex;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  justify-content: center;
+  align-items: center;
+  color: var(--color-text);
+  border-radius: var(--radius-full);
+  transition: all var(--transition-fast);
+
+  &:hover {
+    background-color: transparent;
+    transform: none;
+  }
+
+  &:active {
+    transform: none;
+  }
+}
+
+.volumeSlider {
+  display: flex;
+  width: 110px;
+  height: 36px;
+  align-items: center;
+}
+
+.volumeInput {
+  width: 100%;
+  height: 3px;
+  background-color: var(--color-border);
+  border-radius: var(--radius-full);
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+
+  &::-webkit-slider-thumb {
+    width: 12px;
+    height: 12px;
+    background: var(--color-primary);
+    border-radius: 50%;
+    cursor: pointer;
+    appearance: none;
+  }
+
+  &::-moz-range-thumb {
+    width: 12px;
+    height: 12px;
+    background: var(--color-primary);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+}
+
+@include down(md) {
+  .controlBtn {
+    width: 30px;
+    height: 30px;
+  }
+
+  .volumeSlider {
+    display: none;
+  }
+}
+

@@ -3,14 +3,14 @@ import PlayIcon from '@shared/svg/Play.svg?react';
 import { Icon } from '@shared/ui/Icon/Icon.tsx';
 import React from 'react';
 
-interface PlayPauseButtonProps {
+interface IPlayPauseButtonProps {
   isPlaying: boolean;
   onToggle: () => void;
   className?: string;
   title?: string;
 }
 
-export const PlayPauseButton: React.FC<PlayPauseButtonProps> = ({
+export const PlayPauseButton: React.FC<IPlayPauseButtonProps> = ({
   isPlaying,
   onToggle,
   className,

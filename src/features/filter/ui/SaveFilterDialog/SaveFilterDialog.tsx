@@ -4,7 +4,7 @@ import React from 'react';
 import s from './SaveFilterDialog.module.scss';
 import { useI18n } from '../../lib';
 
-interface SaveFilterDialogProps {
+interface ISaveFilterDialogProps {
   isOpen: boolean;
   value: string;
   onChange: (v: string) => void;
@@ -12,7 +12,7 @@ interface SaveFilterDialogProps {
   onSubmit: () => void;
 }
 
-export const SaveFilterDialog: React.FC<SaveFilterDialogProps> = ({
+export const SaveFilterDialog: React.FC<ISaveFilterDialogProps> = ({
   isOpen,
   value,
   onChange,

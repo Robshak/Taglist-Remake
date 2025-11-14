@@ -1,8 +1,9 @@
 import { TagOperation } from '@entities/playlist';
+import { createThrottledStorage } from '@shared/lib/throttledStorage';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-interface FilterState {
+interface IFilterState {
   selectedTags: string[];
   tagBlocks: string[][];
   tagOperation: (typeof TagOperation)[keyof typeof TagOperation];
@@ -17,7 +18,7 @@ interface FilterState {
   renameTagInFilter: (oldTag: string, newTag: string) => void;
 }
 
-export const useFilterStore = create<FilterState>()(
+export const useFilterStore = create<IFilterState>()(
   persist(
     (set, get) => ({
       selectedTags: [],
@@ -65,6 +66,7 @@ export const useFilterStore = create<FilterState>()(
     }),
     {
       name: 'filter-store',
+      storage: createThrottledStorage(1000),
       partialize: (s) => ({
         selectedTags: s.selectedTags,
         tagBlocks: s.tagBlocks,

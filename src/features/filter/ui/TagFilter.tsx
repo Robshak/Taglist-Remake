@@ -1,4 +1,5 @@
 import { usePlaylistStore } from '@entities/playlist';
+import { useReducedMotion } from '@shared/lib/helpers.ts';
 import ChevronDownIcon from '@shared/svg/ChevronDown.svg?react';
 import SaveIcon from '@shared/svg/Save.svg?react';
 import TagIcon from '@shared/svg/Tag.svg?react';
@@ -19,8 +20,12 @@ interface ITagFilterProps {
 
 export const TagFilter = ({ availableTags }: ITagFilterProps) => {
   const { t } = useI18n();
-  const { tagBlocks, resetFilter } = useFilterStore();
-  const { playlists, createFavoriteFromFilter } = usePlaylistStore();
+  const shouldReduceMotion = useReducedMotion();
+
+  const tagBlocks = useFilterStore((state) => state.tagBlocks);
+  const resetFilter = useFilterStore((state) => state.resetFilter);
+  const playlists = usePlaylistStore((state) => state.playlists);
+  const createFavoriteFromFilter = usePlaylistStore((state) => state.createFavoriteFromFilter);
   const [favoriteName, setFavoriteName] = useState('');
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -89,10 +94,14 @@ export const TagFilter = ({ availableTags }: ITagFilterProps) => {
         {isOpen && (
           <motion.div
             id="tag-filter-content"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            {...(shouldReduceMotion
+              ? {}
+              : {
+                  initial: { height: 0, opacity: 0 },
+                  animate: { height: 'auto', opacity: 1 },
+                  exit: { height: 0, opacity: 0 },
+                  transition: { duration: 0.2 },
+                })}
           >
             <TagBlocksBuilder availableTags={availableTags} />
           </motion.div>

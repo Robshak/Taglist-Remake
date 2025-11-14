@@ -2,7 +2,7 @@ import LoopIcon from '@shared/svg/Loop.svg?react';
 import { Icon } from '@shared/ui/Icon/Icon.tsx';
 import React from 'react';
 
-interface LoopToggleProps {
+interface ILoopToggleProps {
   isActive: boolean;
   onToggle: () => void;
   className?: string;
@@ -10,7 +10,7 @@ interface LoopToggleProps {
   title?: string;
 }
 
-export const LoopToggle: React.FC<LoopToggleProps> = ({
+export const LoopToggle: React.FC<ILoopToggleProps> = ({
   isActive,
   onToggle,
   className,

@@ -1,86 +1,106 @@
 import { usePlayerStore } from '@entities/player';
 import { useTrackStore } from '@entities/track';
-import { formatDuration } from '@shared/lib/helpers.ts';
+import { formatDuration, useOptimizedImage } from '@shared/lib/helpers.ts';
 import PlayIcon from '@shared/svg/Play.svg?react';
 import type { ITrack } from '@shared/types';
-import { Equalizer, Icon, TagsLine, TrackTagsManager } from '@shared/ui';
+import { Equalizer, Icon, TagsLine } from '@shared/ui';
 import { motion } from 'motion/react';
-import { useEffect, useState } from 'react';
+import { lazy, memo, Suspense, useCallback, useState } from 'react';
 
 import s from './TrackItem.module.scss';
+
+const LazyTrackTagsManager = lazy(() =>
+  import('@shared/ui').then((module) => ({ default: module.TrackTagsManager }))
+);
 
 interface ITrackItemProps {
   track: ITrack;
   index: number;
+  isFirst?: boolean;
 }
 
-export const TrackItem = ({ track, index }: ITrackItemProps) => {
-  const { currentTrack, setCurrentTrack } = useTrackStore();
-  const { isPlaying, setIsPlaying } = usePlayerStore();
+const TrackItemComponent = ({ track, index, isFirst = false }: ITrackItemProps) => {
+  const currentTrackId = useTrackStore((state) => state.currentTrack?.id);
+  const setCurrentTrack = useTrackStore((state) => state.setCurrentTrack);
+  const isPlaying = usePlayerStore((state) => state.isPlaying);
+  const setIsPlaying = usePlayerStore((state) => state.setIsPlaying);
+
   const [showTagsManager, setShowTagsManager] = useState(false);
-  const [isMobile, setIsMobile] = useState<boolean>(() =>
-    typeof window !== 'undefined' ? window.matchMedia('(max-width: 768px)').matches : false
-  );
-  const isCurrentTrack = currentTrack?.id === track.id;
+
+  const { imgRef, loaded: imageLoaded, shouldLoad, onLoad } = useOptimizedImage(track.imageUrl);
+
+  const isCurrentTrack = currentTrackId === track.id;
   const isCurrentlyPlaying = isCurrentTrack && isPlaying;
 
-  useEffect(() => {
-    const mq = window.matchMedia('(max-width: 768px)');
-    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
-    if (mq.addEventListener) mq.addEventListener('change', handler);
-    else
-      mq.addListener(handler as unknown as (this: MediaQueryList, ev: MediaQueryListEvent) => void);
-    setIsMobile(mq.matches);
-    return () => {
-      if (mq.removeEventListener) mq.removeEventListener('change', handler);
-      else
-        mq.removeListener(
-          handler as unknown as (this: MediaQueryList, ev: MediaQueryListEvent) => void
-        );
-    };
-  }, []);
+  const handlePlay = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      if (isCurrentTrack) {
+        setIsPlaying(!isPlaying);
+      } else {
+        setCurrentTrack(track);
+        setIsPlaying(true);
+      }
+    },
+    [isCurrentTrack, isPlaying, track, setCurrentTrack, setIsPlaying]
+  );
 
-  const handlePlay = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleDoubleClick = useCallback(() => {
     if (isCurrentTrack) {
       setIsPlaying(!isPlaying);
     } else {
       setCurrentTrack(track);
       setIsPlaying(true);
     }
-  };
+  }, [isCurrentTrack, isPlaying, track, setCurrentTrack, setIsPlaying]);
 
-  const handleDoubleClick = () => {
-    if (isCurrentTrack) {
-      setIsPlaying(!isPlaying);
-    } else {
-      setCurrentTrack(track);
-      setIsPlaying(true);
-    }
-  };
-
-  const handleSingleClick = () => {
+  const handleSingleClick = useCallback(() => {
     if (isCurrentTrack) {
       setIsPlaying(true);
     } else {
       setCurrentTrack(track);
       setIsPlaying(true);
     }
-  };
+  }, [isCurrentTrack, track, setCurrentTrack, setIsPlaying]);
+
+  const handleOpenTags = useCallback(() => setShowTagsManager(true), []);
+  const handleCloseTags = useCallback(() => setShowTagsManager(false), []);
+
+  const shouldAnimate = isFirst && index < 15;
+  const motionProps = shouldAnimate
+    ? {
+        initial: { opacity: 0, y: -10 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 0.2, delay: index * 0.02 },
+      }
+    : {};
 
   return (
     <>
       <motion.div
         className={`${s.trackItem} ${isCurrentTrack ? s.active : ''}`}
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: index * 0.05 }}
-        whileHover={{ scale: 1.02 }}
-        onClick={isMobile ? handleSingleClick : undefined}
+        {...motionProps}
+        onClick={handleSingleClick}
         onDoubleClick={handleDoubleClick}
       >
         <div className={s.info}>
-          {track.imageUrl && <img src={track.imageUrl} alt={track.name} className={s.cover} />}
+          {track.imageUrl && (
+            <div className={s.coverWrapper}>
+              {!imageLoaded && <div className={s.coverPlaceholder} />}
+              <img
+                ref={imgRef}
+                src={shouldLoad ? track.imageUrl : undefined}
+                alt={track.name}
+                className={s.cover}
+                loading="lazy"
+                decoding="async"
+                onLoad={onLoad}
+                style={{ opacity: imageLoaded ? 1 : 0 }}
+                width={80}
+                height={80}
+              />
+            </div>
+          )}
           <button className={s.playBtn} onClick={handlePlay}>
             {isCurrentlyPlaying ? (
               <Equalizer className={s.equalizer} barClassName={s.equalizerBar} />
@@ -100,7 +120,7 @@ export const TrackItem = ({ track, index }: ITrackItemProps) => {
               <span className={s.titlelineArtist}>{track.artist}</span>
             </div>
             <div className={s.tags} onClick={(e) => e.stopPropagation()}>
-              <TagsLine tags={track.customTags || []} onEdit={() => setShowTagsManager(true)} />
+              <TagsLine tags={track.customTags || []} onEdit={handleOpenTags} />
             </div>
           </div>
         </div>
@@ -109,8 +129,19 @@ export const TrackItem = ({ track, index }: ITrackItemProps) => {
       </motion.div>
 
       {showTagsManager && (
-        <TrackTagsManager track={track} onClose={() => setShowTagsManager(false)} />
+        <Suspense fallback={null}>
+          <LazyTrackTagsManager track={track} onClose={handleCloseTags} />
+        </Suspense>
       )}
     </>
   );
 };
+
+export const TrackItem = memo(TrackItemComponent, (prev, next) => {
+  return (
+    prev.track.id === next.track.id &&
+    prev.index === next.index &&
+    prev.isFirst === next.isFirst &&
+    prev.track.customTags === next.track.customTags
+  );
+});

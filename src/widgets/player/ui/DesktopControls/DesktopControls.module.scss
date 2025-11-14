@@ -1,0 +1,76 @@
+@use "@shared/styles/mixins" as *;
+
+.controls {
+  display: flex;
+  margin-top: var(--spacing-xs);
+  flex-direction: column;
+  align-self: end;
+  gap: var(--spacing-xs);
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.controlBtn {
+  display: flex;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  justify-content: center;
+  align-items: center;
+  color: var(--color-text);
+  border-radius: var(--radius-full);
+  transition: all var(--transition-fast);
+
+  &:hover {
+    background-color: transparent;
+    transform: none;
+  }
+
+  &:active {
+    transform: none;
+  }
+
+  &Small {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+.active {
+  color: var(--color-primary);
+  background-color: var(--color-bg);
+}
+
+.playBtn {
+  width: 42px !important;
+  height: 42px !important;
+  color: white;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
+
+  &:hover {
+    box-shadow: var(--shadow-lg);
+  }
+}
+
+@include down(md) {
+  .controlBtn {
+    width: 30px;
+    height: 30px;
+
+    &Small {
+      width: 28px;
+      height: 28px;
+    }
+  }
+
+  .playBtn {
+    width: 36px !important;
+    height: 36px !important;
+  }
+}
+

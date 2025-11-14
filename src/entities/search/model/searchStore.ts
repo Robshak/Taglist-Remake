@@ -1,13 +1,13 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-interface SearchState {
+interface ISearchState {
   searchQuery: string;
   setSearchQuery: (q: string) => void;
   clearSearch: () => void;
 }
 
-export const useSearchStore = create<SearchState>()(
+export const useSearchStore = create<ISearchState>()(
   persist(
     (set) => ({
       searchQuery: '',

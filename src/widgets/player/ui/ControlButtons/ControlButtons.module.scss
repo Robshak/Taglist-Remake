@@ -1,0 +1,39 @@
+@use "@shared/styles/_mixins.scss" as *;
+
+.buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.btn {
+  display: inline-flex;
+  width: 48px;
+  height: 48px;
+  justify-content: center;
+  align-items: center;
+  color: var(--color-text);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-full);
+}
+
+.btnActive {
+  color: var(--color-primary);
+  background: var(--color-bg);
+}
+
+.play {
+  width: 64px !important;
+  height: 64px !important;
+  color: white;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
+}
+
+@include down(md) {
+  .play {
+    width: 56px !important;
+    height: 56px !important;
+  }
+}
+

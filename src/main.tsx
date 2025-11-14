@@ -6,9 +6,16 @@ import '@shared/styles/globals.scss';
 import { preloadTranslations } from './i18n';
 
 preloadTranslations().then(() => {
-  createRoot(document.getElementById('root')!).render(
-    <StrictMode>
+  const rootElement = document.getElementById('root');
+  if (!rootElement) return;
+
+  createRoot(rootElement).render(
+    import.meta.env.DEV ? (
+      <StrictMode>
+        <App />
+      </StrictMode>
+    ) : (
       <App />
-    </StrictMode>
+    )
   );
 });

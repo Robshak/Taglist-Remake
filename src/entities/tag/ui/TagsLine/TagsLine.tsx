@@ -1,15 +1,17 @@
+import TagIcon from '@shared/svg/Tag.svg?react';
+import { Icon } from '@shared/ui';
 import React from 'react';
 
 import s from './TagsLine.module.scss';
 import { useI18n } from '../../lib';
 
-interface TagsLineProps {
+interface ITagsLineProps {
   tags: string[];
   onEdit?: () => void;
   maxWidth?: number | string;
 }
 
-export const TagsLine: React.FC<TagsLineProps> = ({ tags, onEdit, maxWidth }) => {
+const TagsLineComponent: React.FC<ITagsLineProps> = ({ tags, onEdit, maxWidth }) => {
   const { t } = useI18n();
 
   return (
@@ -22,16 +24,10 @@ export const TagsLine: React.FC<TagsLineProps> = ({ tags, onEdit, maxWidth }) =>
         ))}
       </div>
       <button type="button" className={s.edit} title={t('buttons.editTags')} onClick={onEdit}>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-          <path
-            d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82zM7 7h.01"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
+        <Icon component={TagIcon} width={14} height={14} />
       </button>
     </div>
   );
 };
+
+export const TagsLine = React.memo(TagsLineComponent);

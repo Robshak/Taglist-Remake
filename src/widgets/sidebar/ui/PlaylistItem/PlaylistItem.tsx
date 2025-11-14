@@ -3,24 +3,24 @@ import { Icon } from '@shared/ui/Icon';
 import { TagPill } from '@shared/ui/TagPill';
 import React from 'react';
 
+import s from './PlaylistItem.module.scss';
 import { useI18n } from '../../lib';
-import s from '../Sidebar.module.scss';
 
-interface FavoritePlaylist {
+interface IFavoritePlaylist {
   id: string;
   name?: string;
   tags: string[];
   tagBlocks?: string[][];
 }
 
-interface PlaylistItemProps {
-  favorite: FavoritePlaylist;
+interface IPlaylistItemProps {
+  favorite: IFavoritePlaylist;
   isActive: boolean;
   onSelect: () => void;
   onDelete: () => void;
 }
 
-export const PlaylistItem: React.FC<PlaylistItemProps> = ({
+export const PlaylistItem: React.FC<IPlaylistItemProps> = ({
   favorite,
   isActive,
   onSelect,

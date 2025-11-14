@@ -1,0 +1,1 @@
+export { useTagManager } from './useTagManager';
