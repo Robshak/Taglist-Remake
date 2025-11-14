@@ -20,7 +20,6 @@ export const useAudioPlayer = () => {
     if (isNewTrack) {
       currentTrackIdRef.current = currentTrack.id;
 
-      audio.pause();
       setCurrentTime(0);
       setDuration(0);
       audio.src = currentTrack.audioUrl || '';
@@ -84,6 +83,10 @@ export const useAudioPlayer = () => {
     window.addEventListener('pagehide', persistProgress);
     window.addEventListener('beforeunload', persistProgress);
 
+    if (audio.readyState >= 1 && isFinite(audio.duration)) {
+      setDuration(audio.duration);
+    }
+
     return () => {
       audio.removeEventListener('timeupdate', handleTimeUpdate);
       audio.removeEventListener('loadedmetadata', handleLoadedMetadata);
@@ -94,7 +97,7 @@ export const useAudioPlayer = () => {
       window.removeEventListener('pagehide', persistProgress);
       window.removeEventListener('beforeunload', persistProgress);
     };
-  }, [isLooping, playNext, setPlaybackPosition]);
+  }, [isLooping, playNext, setPlaybackPosition, currentTrack]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -102,15 +105,36 @@ export const useAudioPlayer = () => {
 
     let isCancelled = false;
 
-    if (isPlaying) {
-      const promise = audio.play();
-      if (promise) {
-        promise.catch((error) => {
-          if (!isCancelled && error.name !== 'AbortError') {
-            setIsPlaying(false);
+    const tryPlay = () => {
+      if (audio.readyState >= 2) {
+        const promise = audio.play();
+        if (promise) {
+          promise.catch((error) => {
+            if (!isCancelled && error.name !== 'AbortError') {
+              setIsPlaying(false);
+            }
+          });
+        }
+      } else {
+        const handleCanPlay = () => {
+          if (!isCancelled && isPlaying) {
+            const promise = audio.play();
+            if (promise) {
+              promise.catch((error) => {
+                if (!isCancelled && error.name !== 'AbortError') {
+                  setIsPlaying(false);
+                }
+              });
+            }
           }
-        });
+          audio.removeEventListener('canplay', handleCanPlay);
+        };
+        audio.addEventListener('canplay', handleCanPlay);
       }
+    };
+
+    if (isPlaying) {
+      tryPlay();
     } else {
       audio.pause();
       if (isFinite(audio.currentTime)) setPlaybackPosition(audio.currentTime);
