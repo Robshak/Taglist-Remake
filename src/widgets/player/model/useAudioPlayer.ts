@@ -4,34 +4,32 @@ import { useEffect, useRef, useState } from 'react';
 
 export const useAudioPlayer = () => {
   const { currentTrack, playNext } = useTrackStore();
-  const { isPlaying, isLooping, setIsPlaying, playbackPosition, setPlaybackPosition } =
-    usePlayerStore();
+  const { isPlaying, isLooping, setIsPlaying, setPlaybackPosition } = usePlayerStore();
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const lastSavedTimeRef = useRef<number>(-1);
-  const didInitialRestoreRef = useRef(false);
-  const pendingRestoreRef = useRef<number | null>(null);
+  const currentTrackIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio || !currentTrack) return;
 
-    setCurrentTime(0);
-    setDuration(0);
-    audio.src = currentTrack.audioUrl || '';
-    audio.load();
-    lastSavedTimeRef.current = -1;
+    const isNewTrack = currentTrackIdRef.current !== currentTrack.id;
+    if (isNewTrack) {
+      currentTrackIdRef.current = currentTrack.id;
 
-    if (!didInitialRestoreRef.current && playbackPosition > 0 && isFinite(playbackPosition)) {
-      pendingRestoreRef.current = playbackPosition;
-    } else {
+      audio.pause();
+      setCurrentTime(0);
+      setDuration(0);
+      audio.src = currentTrack.audioUrl || '';
+      audio.load();
+      lastSavedTimeRef.current = -1;
       audio.currentTime = 0;
       setPlaybackPosition(0);
-      setCurrentTime(0);
     }
-  }, [currentTrack, playbackPosition, setPlaybackPosition]);
+  }, [currentTrack, setPlaybackPosition]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -58,24 +56,10 @@ export const useAudioPlayer = () => {
 
     const handleLoadedMetadata = () => {
       if (isFinite(audio.duration)) setDuration(audio.duration);
-      if (pendingRestoreRef.current !== null && isFinite(audio.duration)) {
-        const target = Math.min(pendingRestoreRef.current, audio.duration - 0.25);
-        audio.currentTime = Math.max(0, target);
-        setCurrentTime(audio.currentTime);
-        pendingRestoreRef.current = null;
-        didInitialRestoreRef.current = true;
-      }
     };
 
     const handleCanPlay = () => {
       if (isFinite(audio.duration)) setDuration(audio.duration);
-      if (pendingRestoreRef.current !== null && isFinite(audio.duration)) {
-        const target = Math.min(pendingRestoreRef.current, audio.duration - 0.25);
-        audio.currentTime = Math.max(0, target);
-        setCurrentTime(audio.currentTime);
-        pendingRestoreRef.current = null;
-        didInitialRestoreRef.current = true;
-      }
     };
 
     const handleDurationChange = () => {
@@ -115,13 +99,26 @@ export const useAudioPlayer = () => {
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio || !currentTrack) return;
+
+    let isCancelled = false;
+
     if (isPlaying) {
       const promise = audio.play();
-      if (promise) promise.catch(() => setIsPlaying(false));
+      if (promise) {
+        promise.catch((error) => {
+          if (!isCancelled && error.name !== 'AbortError') {
+            setIsPlaying(false);
+          }
+        });
+      }
     } else {
       audio.pause();
       if (isFinite(audio.currentTime)) setPlaybackPosition(audio.currentTime);
     }
+
+    return () => {
+      isCancelled = true;
+    };
   }, [isPlaying, currentTrack, setIsPlaying, setPlaybackPosition]);
 
   const handleSeek = (time: number) => {

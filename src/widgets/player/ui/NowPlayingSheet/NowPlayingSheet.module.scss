@@ -39,6 +39,30 @@
   font-weight: 700;
 }
 
+.btn {
+  display: inline-flex;
+  width: 36px;
+  height: 36px;
+  justify-content: center;
+  align-items: center;
+  color: var(--color-text);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+
+  &:hover {
+    background: var(--color-bg);
+    border-color: var(--color-text-secondary);
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
 .content {
   display: flex;
   width: 100%;

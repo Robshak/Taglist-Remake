@@ -27,7 +27,6 @@ export const TrackList = () => {
 
   const tracks = useTrackStore(useShallow((state) => state.tracks));
   const allCustomTags = useTrackStore((state) => state.allCustomTags);
-  const getAvailableTags = useTrackStore((state) => state.getAvailableTags);
   const selectedTags = useFilterStore(useShallow((state) => state.selectedTags));
   const tagBlocks = useFilterStore(useShallow((state) => state.tagBlocks));
   const tagOperation = useFilterStore((state) => state.tagOperation);
@@ -42,7 +41,7 @@ export const TrackList = () => {
     return filterTracksByTags(tracks, debouncedSelectedTags, tagOperation);
   }, [tracks, debouncedTagBlocks, debouncedSelectedTags, tagOperation]);
 
-  const availableTags = useMemo(() => getAvailableTags(), [getAvailableTags, allCustomTags]);
+  const availableTags = useMemo(() => Array.from(new Set(allCustomTags)).sort(), [allCustomTags]);
 
   useEffect(() => {
     if (parentRef.current) {
