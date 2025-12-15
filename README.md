@@ -28,7 +28,6 @@
 - 🧹 ESLint + TypeScript-ESLint
 - 💅 Prettier
 - 🔍 Stylelint + @stylistic
-- 🧩 Husky/линтер-скрипты для чистоты кода
 
 ---
 
